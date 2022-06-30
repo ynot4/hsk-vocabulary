@@ -39,11 +39,31 @@ class MainApp:
         border.config(background=level_colour)
         hsk.config(bg=level_colour)
         number.config(bg=level_colour)
+        self.bg_colour(int(level.l[rand]))
 
         english.config(state="normal")
         english.delete(1.0, "end")
         english.insert(1.0, eng.l[rand])
         english.config(state="disabled")
+
+    def bg_colour(self, level_number, *args):
+        if level_number == 1:
+            colour = "#fef8e9"
+        elif level_number == 2:
+            colour = "#e9f2f4"
+        elif level_number == 3:
+            colour = "#ffede8"
+        elif level_number == 4:
+            colour = "#f8e8e8"
+        elif level_number == 5:
+            colour = "#e8ecf1"
+        else:
+            colour = "#f0ebf0"
+        self.master.config(bg=colour)
+        self.frame.config(bg=colour)
+        self.frame2.config(bg=colour)
+        for wid in self.frame.winfo_children():
+            wid.configure(bg=colour)
 
     def __init__(self, master):
         self.master = master
@@ -114,11 +134,11 @@ class MainApp:
         self.number.pack(fill="both", expand=True)
         self.level.grid(row=1, column=0)
 
-        self.english = tk.Text(self.frame2, font=("Noto Sans", 18), width=30, height=3, wrap="word", state="normal")
+        self.english = tk.Text(self.frame2, font=("Noto Sans SC", 18), width=30, height=3, wrap="word", state="normal")
 
         self.scrollbar = tk.Scrollbar(self.frame2)
         self.scrollbar.grid(row=0, column=2, sticky="nse", padx=(0, 20))
-        self.english.config(yscrollcommand=self.scrollbar.set)
+        self.english.config(yscrollcommand=self.scrollbar.set, highlightthickness=0, borderwidth=0)
         self.scrollbar.config(command=self.english.yview)
 
         self.hsk_and_level.grid(row=0, column=0)
