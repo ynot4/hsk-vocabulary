@@ -26,8 +26,42 @@ class MainApp:
             level_colour = "#6A3669"
         return level_colour
 
-    def generate_new(self, trad_c, simp_c, jyutping, pinyin_c, border, hsk, number, english):
-        rand = random.randrange(0, len(simp.l))
+    def generate_new(self, trad_c, simp_c, jyutping, pinyin_c, border, hsk, number, english, selected_levels):
+        checked_levels = list()
+        for item in range(len(selected_levels)):
+            if list(selected_levels.values())[item].get() == 1:  # if box is checked
+                checked_levels.append(list(selected_levels.keys())[item][-1])  # add hsk level number to list
+
+        rand1 = rand2 = rand3 = rand4 = rand5 = rand6 = ""
+        if "1" in checked_levels:
+            pos = level.l.index('1')
+            pos2 = level.l.index('2')
+            rand1 = random.randrange(pos, pos2)
+        if "2" in checked_levels:
+            pos = level.l.index('2')
+            pos2 = level.l.index('3')
+            rand2 = random.randrange(pos, pos2)
+        if "3" in checked_levels:
+            pos = level.l.index('3')
+            pos2 = level.l.index('4')
+            rand3 = random.randrange(pos, pos2)
+        if "4" in checked_levels:
+            pos = level.l.index('4')
+            pos2 = level.l.index('5')
+            rand4 = random.randrange(pos, pos2)
+        if "5" in checked_levels:
+            pos = level.l.index('5')
+            pos2 = level.l.index('6')
+            rand5 = random.randrange(pos, pos2)
+        if "6" in checked_levels:
+            pos = level.l.index('6')
+            rand6 = random.randrange(pos, len(level.l))
+
+        rand_nums = [rand1, rand2, rand3, rand4, rand5, rand6]
+        rand = int()
+        while not rand:
+            rand = random.choice(rand_nums)
+        rand = int(rand)
 
         trad_c.config(text=trad.l[rand])
         simp_c.config(text=simp.l[rand])
@@ -64,6 +98,8 @@ class MainApp:
         self.frame2.config(bg=colour)
         for wid in self.frame.winfo_children():
             wid.configure(bg=colour)
+        for wid in self.frame3.winfo_children():
+            wid.configure(bg=colour)
 
     def __init__(self, master):
         self.master = master
@@ -80,8 +116,8 @@ class MainApp:
 
         self.frame = tk.Frame(self.master)
 
-        tk.Label(self.frame, text="Traditional: ", font=("Noto Sans", 25)).grid(row=0, column=0)
-        tk.Label(self.frame, text="Simplified: ", font=("Noto Sans", 25)).grid(row=2, column=0)
+        tk.Label(self.frame, text="Traditional: ", font=("Noto Sans", 25)).grid(row=0, column=0, sticky="e")
+        tk.Label(self.frame, text="Simplified: ", font=("Noto Sans", 25)).grid(row=2, column=0, sticky="e")
 
         self.trad_c = tk.Label(self.frame, font=("Noto Sans HK", 60, "bold"))
         self.trad_c.grid(row=0, column=1, padx=20)
@@ -94,24 +130,28 @@ class MainApp:
         self.copy_trad = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.copy_icon, compound="center", command=lambda: self.copy(self.trad_c),
                                    borderwidth=0)
-        self.copy_trad.grid(row=0, column=2, padx=10)
+        self.copy_trad.grid(row=0, column=3, padx=10)
         self.play_trad = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.play_icon, compound="center", command=lambda: self.copy(self.trad_c),
                                    borderwidth=0)
-        self.play_trad.grid(row=0, column=3)
+        self.play_trad.grid(row=0, column=2)
 
+        tk.Label(self.frame, text="(Cantonese)", font=("Noto Serif", 12, "italic")).grid(row=1, column=2,
+                                                                                         sticky="w")
         self.jyutping = tk.Label(self.frame, font=("Noto Serif", 20, "italic"))
         self.jyutping.grid(row=1, column=1)
 
         self.copy_simp = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.copy_icon, compound="center", command=lambda: self.copy(self.simp_c),
                                    borderwidth=0)
-        self.copy_simp.grid(row=2, column=2, padx=10)
+        self.copy_simp.grid(row=2, column=3, padx=10)
         self.play_simp = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.play_icon, compound="center", command=lambda: self.copy(self.simp_c),
                                    borderwidth=0)
-        self.play_simp.grid(row=2, column=3)
+        self.play_simp.grid(row=2, column=2)
 
+        tk.Label(self.frame, text="(Mandarin)", font=("Noto Serif", 12, "italic")).grid(row=3, column=2,
+                                                                                        sticky="w")
         self.pinyin = tk.Label(self.frame, font=("Noto Serif", 20, "italic"))
         self.pinyin.grid(row=3, column=1)
 
@@ -146,14 +186,29 @@ class MainApp:
 
         self.new = tk.Button(self.frame2, command=lambda: self.generate_new(self.trad_c, self.simp_c, self.jyutping,
                                                                             self.pinyin, self.hsk_and_level,
-                                                                            self.hsk_label, self.number, self.english),
+                                                                            self.hsk_label, self.number, self.english,
+                                                                            self.dict),
                              text="new", font=("Noto Sans", 18))
         self.new.grid(row=0, column=3)
 
         self.frame2.pack()
 
+        self.frame3 = tk.Frame(self.master)
+
+        self.hsk_levels = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4', 'HSK 5', 'HSK 6']
+        self.dict = {}  # dictionary to store all the IntVars
+        for option in self.hsk_levels:
+            var = tk.IntVar()
+            tk.Checkbutton(self.frame3, text=option, font=("Noto Sans", 15), variable=var).pack()
+            self.dict[option] = var  # add IntVar to the dictionary
+
+        for item in range(3):
+            list(self.dict.values())[item].set(1)
+
+        self.frame3.place(x=20, y=160)
+
         self.generate_new(self.trad_c, self.simp_c, self.jyutping, self.pinyin, self.hsk_and_level, self.hsk_label,
-                          self.number, self.english)
+                          self.number, self.english, self.dict)
 
 
 if __name__ == '__main__':
