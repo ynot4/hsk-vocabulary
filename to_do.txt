@@ -1,7 +1,0 @@
-choose cantonese romanisation
-check if online, choose tts module accordingly
-check if tts voices installed
-choose which levels to include
-word lookup
-add view previous
-change bg colour based on hsk level
