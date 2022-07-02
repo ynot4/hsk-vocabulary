@@ -226,6 +226,13 @@ class MainApp:
         self.generate_new(self.trad_c, self.simp_c, self.jyutping, self.pinyin, self.hsk_and_level, self.hsk_label,
                           self.number, self.english, self.dict)
 
+        self.options = tk.Menubutton(self.master, text="Options", font=("Noto Sans SC", 25), relief="raised")
+        self.options.menu = tk.Menu(self.options, tearoff=0)
+        self.options["menu"] = self.options.menu
+        self.options.menu.add_checkbutton(label="Choose HSK Levels", font=("Noto Sans", 15))
+        self.options.menu.add_checkbutton(label="Cantonese Romanisation", font=("Noto Sans", 15))
+        self.options.place(x=800, y=25)
+
 
 if __name__ == '__main__':
     root = tk.Tk()
