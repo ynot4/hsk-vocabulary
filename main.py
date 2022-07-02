@@ -203,22 +203,23 @@ class MainApp:
 
         self.frame3 = tk.Frame(self.master)
 
+        def write_file():
+            self.saved_dict = "saved_dict = {"
+            for item in range(len(self.dict)):
+                self.saved_dict += f'"{self.hsk_levels[item]}": {list(self.dict.values())[item].get()},\n'
+            self.saved_dict += "}"
+            with open(save_location, "w") as f:
+                f.write(self.saved_dict)
+
         self.hsk_levels = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4', 'HSK 5', 'HSK 6']
-        self.dict = get_dict()  # dictionary to store all the IntVars
-        for option in self.hsk_levels:
+        self.dict_saved = get_dict()  # dictionary to store all the IntVars
+        self.dict = dict()
+        for option in range(len(self.hsk_levels)):
+            o = self.hsk_levels[option]
             var = tk.IntVar()
-            tk.Checkbutton(self.frame3, text=option, font=("Noto Sans", 15), variable=var).pack()
-            self.dict[option] = var  # add IntVar to the dictionary
-
-        for item in range(3):
-            list(self.dict.values())[item].set(1)
-
-        self.saved_dict = "saved_dict = {"
-        for item in range(len(self.dict)):
-            self.saved_dict += f'"{self.hsk_levels[item]}": {list(self.dict.values())[item].get()},\n'
-        self.saved_dict += "}"
-        with open(save_location, "w") as f:
-            f.write(self.saved_dict)
+            tk.Checkbutton(self.frame3, text=o, font=("Noto Sans", 15), variable=var, command=write_file).pack()
+            var.set(list(self.dict_saved.values())[option])
+            self.dict[o] = var  # add IntVar to the dictionary
 
         self.frame3.place(x=20, y=160)
 

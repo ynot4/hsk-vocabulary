@@ -25,6 +25,8 @@ def create_save_folder():
 "HSK 6": 0,
 })''')
 
+    return save_location
+
 
 save_location = create_save_folder()
 
