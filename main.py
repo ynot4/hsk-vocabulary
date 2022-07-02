@@ -1,5 +1,7 @@
 import tkinter as tk
+import tkinter.messagebox
 from PIL import Image, ImageTk
+from save_dict import get_dict, save_location
 
 import random
 from lists import eng, jyut, level, pinyin, simp, trad, yale, yalenum
@@ -33,52 +35,58 @@ class MainApp:
                 checked_levels.append(list(selected_levels.keys())[item][-1])  # add hsk level number to list
 
         rand1 = rand2 = rand3 = rand4 = rand5 = rand6 = ""
-        if "1" in checked_levels:
-            pos = level.l.index('1')
-            pos2 = level.l.index('2')
-            rand1 = random.randrange(pos, pos2)
-        if "2" in checked_levels:
-            pos = level.l.index('2')
-            pos2 = level.l.index('3')
-            rand2 = random.randrange(pos, pos2)
-        if "3" in checked_levels:
-            pos = level.l.index('3')
-            pos2 = level.l.index('4')
-            rand3 = random.randrange(pos, pos2)
-        if "4" in checked_levels:
-            pos = level.l.index('4')
-            pos2 = level.l.index('5')
-            rand4 = random.randrange(pos, pos2)
-        if "5" in checked_levels:
-            pos = level.l.index('5')
-            pos2 = level.l.index('6')
-            rand5 = random.randrange(pos, pos2)
-        if "6" in checked_levels:
-            pos = level.l.index('6')
-            rand6 = random.randrange(pos, len(level.l))
+        levels_selected = True
+        if not checked_levels:
+            levels_selected = False
+            tk.messagebox.showerror(title="Error", message="Please select at least one HSK level to display words from.")
 
-        rand_nums = [rand1, rand2, rand3, rand4, rand5, rand6]
-        rand = int()
-        while not rand:
-            rand = random.choice(rand_nums)
-        rand = int(rand)
+        if levels_selected:
+            if "1" in checked_levels:
+                pos = level.l.index('1')
+                pos2 = level.l.index('2')
+                rand1 = random.randrange(pos, pos2)
+            if "2" in checked_levels:
+                pos = level.l.index('2')
+                pos2 = level.l.index('3')
+                rand2 = random.randrange(pos, pos2)
+            if "3" in checked_levels:
+                pos = level.l.index('3')
+                pos2 = level.l.index('4')
+                rand3 = random.randrange(pos, pos2)
+            if "4" in checked_levels:
+                pos = level.l.index('4')
+                pos2 = level.l.index('5')
+                rand4 = random.randrange(pos, pos2)
+            if "5" in checked_levels:
+                pos = level.l.index('5')
+                pos2 = level.l.index('6')
+                rand5 = random.randrange(pos, pos2)
+            if "6" in checked_levels:
+                pos = level.l.index('6')
+                rand6 = random.randrange(pos, len(level.l))
 
-        trad_c.config(text=trad.l[rand])
-        simp_c.config(text=simp.l[rand])
-        jyutping.config(text=yalenum.l[rand])
-        pinyin_c.config(text=pinyin.l[rand])
-        number.config(text=level.l[rand])
+            rand_nums = [rand1, rand2, rand3, rand4, rand5, rand6]
+            rand = int()
+            while not rand:
+                rand = random.choice(rand_nums)
+            rand = int(rand)
 
-        level_colour = self.level_colour(int(level.l[rand]))
-        border.config(background=level_colour)
-        hsk.config(bg=level_colour)
-        number.config(bg=level_colour)
-        self.bg_colour(int(level.l[rand]))
+            trad_c.config(text=trad.l[rand])
+            simp_c.config(text=simp.l[rand])
+            jyutping.config(text=yalenum.l[rand])
+            pinyin_c.config(text=pinyin.l[rand])
+            number.config(text=level.l[rand])
 
-        english.config(state="normal")
-        english.delete(1.0, "end")
-        english.insert(1.0, eng.l[rand])
-        english.config(state="disabled")
+            level_colour = self.level_colour(int(level.l[rand]))
+            border.config(background=level_colour)
+            hsk.config(bg=level_colour)
+            number.config(bg=level_colour)
+            self.bg_colour(int(level.l[rand]))
+
+            english.config(state="normal")
+            english.delete(1.0, "end")
+            english.insert(1.0, eng.l[rand])
+            english.config(state="disabled")
 
     def bg_colour(self, level_number, *args):
         if level_number == 1:
@@ -104,7 +112,7 @@ class MainApp:
     def __init__(self, master):
         self.master = master
         self.master.title("HSK Vocabulary")
-        self.master.geometry("900x600")
+        self.master.geometry("950x600")
 
         self.master.update()
         self.header = tk.Canvas(self.master, height=100, width=self.master.winfo_width(), bg="#3298dc")
@@ -196,7 +204,7 @@ class MainApp:
         self.frame3 = tk.Frame(self.master)
 
         self.hsk_levels = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4', 'HSK 5', 'HSK 6']
-        self.dict = {}  # dictionary to store all the IntVars
+        self.dict = get_dict()  # dictionary to store all the IntVars
         for option in self.hsk_levels:
             var = tk.IntVar()
             tk.Checkbutton(self.frame3, text=option, font=("Noto Sans", 15), variable=var).pack()
@@ -204,6 +212,13 @@ class MainApp:
 
         for item in range(3):
             list(self.dict.values())[item].set(1)
+
+        self.saved_dict = "saved_dict = {"
+        for item in range(len(self.dict)):
+            self.saved_dict += f'"{self.hsk_levels[item]}": {list(self.dict.values())[item].get()},\n'
+        self.saved_dict += "}"
+        with open(save_location, "w") as f:
+            f.write(self.saved_dict)
 
         self.frame3.place(x=20, y=160)
 
