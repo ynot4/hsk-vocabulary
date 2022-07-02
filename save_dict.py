@@ -23,7 +23,7 @@ def create_save_folder():
 "HSK 4": 0,
 "HSK 5": 0,
 "HSK 6": 0,
-})''')
+}''')
 
     return save_location
 
