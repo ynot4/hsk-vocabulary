@@ -23,7 +23,8 @@ def create_save_folder():
 "HSK 4": 0,
 "HSK 5": 0,
 "HSK 6": 0,
-}''')
+}
+canto_rom = "Yale (Tone Numbers)"''')
 
     return save_location
 
@@ -44,3 +45,16 @@ def get_dict():
     dict = (modulevar.saved_dict)
 
     return dict
+
+
+def get_canto_rom():
+    MODULE_PATH = save_location
+    MODULE_NAME = "selected_hsk_levels"
+
+    spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
+    modulevar = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulevar)
+
+    rom = (modulevar.canto_rom)
+
+    return rom

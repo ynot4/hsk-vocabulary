@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
 from PIL import Image, ImageTk
-from save_dict import get_dict, save_location
+from save_dict import get_dict, save_location, get_canto_rom
 
 import random
 from lists import eng, jyut, level, pinyin, simp, trad, yale, yalenum
@@ -34,11 +34,13 @@ class MainApp:
             if list(selected_levels.values())[item].get() == 1:  # if box is checked
                 checked_levels.append(list(selected_levels.keys())[item][-1])  # add hsk level number to list
 
+        rand = int()
         rand1 = rand2 = rand3 = rand4 = rand5 = rand6 = ""
         levels_selected = True
         if not checked_levels:
             levels_selected = False
-            tk.messagebox.showerror(title="Error", message="Please select at least one HSK level to display words from.")
+            tk.messagebox.showerror(title="Error",
+                                    message="Please select at least one HSK level to display words from.")
 
         if levels_selected:
             if "1" in checked_levels:
@@ -66,14 +68,21 @@ class MainApp:
                 rand6 = random.randrange(pos, len(level.l))
 
             rand_nums = [rand1, rand2, rand3, rand4, rand5, rand6]
-            rand = int()
             while not rand:
                 rand = random.choice(rand_nums)
             rand = int(rand)
 
             trad_c.config(text=trad.l[rand])
             simp_c.config(text=simp.l[rand])
-            jyutping.config(text=yalenum.l[rand])
+
+            global canto_rom
+            if canto_rom == "Yale (Tone Numbers)":
+                jyutping.config(text=yalenum.l[rand])
+            elif canto_rom == "Yale (Tone Marks)":
+                jyutping.config(text=yale.l[rand])
+            else:
+                jyutping.config(text=jyut.l[rand])
+
             pinyin_c.config(text=pinyin.l[rand])
             number.config(text=level.l[rand])
 
@@ -87,6 +96,8 @@ class MainApp:
             english.delete(1.0, "end")
             english.insert(1.0, eng.l[rand])
             english.config(state="disabled")
+        global rand_int
+        rand_int = rand
 
     def bg_colour(self, level_number, *args):
         if level_number == 1:
@@ -130,7 +141,27 @@ class MainApp:
         self.options.menu = tk.Menu(self.options, tearoff=0)
         self.options["menu"] = self.options.menu
         self.options.menu.add_cascade(label="Choose HSK Levels", font=("Noto Sans", 14), command=self.show_levels)
-        self.options.menu.add_cascade(label="Cantonese Romanisation", font=("Noto Sans", 14))
+
+        def set_roms(menu, index, rand, jyutping):
+            global canto_rom
+            canto_rom = menu.entrycget(index, "label")
+            if canto_rom == "Yale (Tone Numbers)":
+                jyutping.config(text=yalenum.l[rand])
+            elif canto_rom == "Yale (Tone Marks)":
+                jyutping.config(text=yale.l[rand])
+            else:
+                jyutping.config(text=jyut.l[rand])
+            write_file()
+
+        self.cantonese_roms = tk.Menu(self.header, tearoff=0)
+        self.cantonese_roms.add_command(label="Jyutping", font=("Noto Sans", 10),
+                                        command=lambda: set_roms(self.cantonese_roms, 0, rand_int, self.jyutping))
+        self.cantonese_roms.add_command(label="Yale (Tone Numbers)", font=("Noto Sans", 10),
+                                        command=lambda: set_roms(self.cantonese_roms, 1, rand_int, self.jyutping))
+        self.cantonese_roms.add_command(label="Yale (Tone Marks)", font=("Noto Sans", 10),
+                                        command=lambda: set_roms(self.cantonese_roms, 2, rand_int, self.jyutping))
+        self.options.menu.add_cascade(label="Cantonese Romanisation", font=("Noto Sans", 14), menu=self.cantonese_roms)
+
         self.options.place(x=800, y=25)
         self.header.pack()
 
@@ -220,6 +251,8 @@ class MainApp:
             for item in range(len(self.dict)):
                 self.saved_dict += f'"{self.hsk_levels[item]}": {list(self.dict.values())[item].get()},\n'
             self.saved_dict += "}"
+            global canto_rom
+            self.saved_dict += f'\ncanto_rom = "{canto_rom}"'
             with open(save_location, "w") as f:
                 f.write(self.saved_dict)
 
@@ -244,5 +277,7 @@ class MainApp:
 
 if __name__ == '__main__':
     root = tk.Tk()
+    canto_rom = get_canto_rom()
+    rand_int = int()
     app = MainApp(root)
     root.mainloop()
