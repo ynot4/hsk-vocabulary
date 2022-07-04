@@ -108,6 +108,11 @@ class MainApp:
             wid.configure(bg=colour)
         for wid in self.frame3.winfo_children():
             wid.configure(bg=colour)
+        self.frame3.config(bg=colour)
+        self.done_button.config(bg="SystemButtonFace")
+
+    def show_levels(self):
+        self.frame3.place(x=20, y=160)
 
     def __init__(self, master):
         self.master = master
@@ -120,6 +125,13 @@ class MainApp:
 
         self.temple = ImageTk.PhotoImage(Image.open("icons/chinese.png").resize((88, 88)))
         self.header.create_image(10, 10, anchor="nw", image=self.temple)
+
+        self.options = tk.Menubutton(self.header, text="Options", font=("Noto Sans SC", 25), relief="raised")
+        self.options.menu = tk.Menu(self.options, tearoff=0)
+        self.options["menu"] = self.options.menu
+        self.options.menu.add_cascade(label="Choose HSK Levels", font=("Noto Sans", 14), command=self.show_levels)
+        self.options.menu.add_cascade(label="Cantonese Romanisation", font=("Noto Sans", 14))
+        self.options.place(x=800, y=25)
         self.header.pack()
 
         self.frame = tk.Frame(self.master)
@@ -220,18 +232,14 @@ class MainApp:
             tk.Checkbutton(self.frame3, text=o, font=("Noto Sans", 15), variable=var, command=write_file).pack()
             var.set(list(self.dict_saved.values())[option])
             self.dict[o] = var  # add IntVar to the dictionary
-
+        self.done_button = tk.Button(self.frame3, text="Done", font=("Noto Sans", 15),
+                                     command=self.frame3.place_forget)
+        self.done_button.pack(pady=(10, 0))
         self.frame3.place(x=20, y=160)
+        self.frame3.place_forget()
 
         self.generate_new(self.trad_c, self.simp_c, self.jyutping, self.pinyin, self.hsk_and_level, self.hsk_label,
                           self.number, self.english, self.dict)
-
-        self.options = tk.Menubutton(self.master, text="Options", font=("Noto Sans SC", 25), relief="raised")
-        self.options.menu = tk.Menu(self.options, tearoff=0)
-        self.options["menu"] = self.options.menu
-        self.options.menu.add_checkbutton(label="Choose HSK Levels", font=("Noto Sans", 15))
-        self.options.menu.add_checkbutton(label="Cantonese Romanisation", font=("Noto Sans", 15))
-        self.options.place(x=800, y=25)
 
 
 if __name__ == '__main__':
