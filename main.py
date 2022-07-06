@@ -5,6 +5,7 @@ from save_dict import get_dict, save_location, get_canto_rom
 
 import random
 from lists import eng, jyut, level, pinyin, simp, trad, yale, yalenum
+from text_speech import speech
 
 
 class MainApp:
@@ -123,7 +124,10 @@ class MainApp:
         self.done_button.config(bg="SystemButtonFace")
 
     def show_levels(self):
-        self.frame3.place(x=20, y=160)
+        if self.frame3.winfo_ismapped():
+            self.frame3.place_forget()
+        else:
+            self.frame3.place(x=20, y=160)
 
     def __init__(self, master):
         self.master = master
@@ -183,8 +187,8 @@ class MainApp:
                                    borderwidth=0)
         self.copy_trad.grid(row=0, column=3, padx=10)
         self.play_trad = tk.Button(self.frame, font=("Noto Sans", 10),
-                                   image=self.play_icon, compound="center", command=lambda: self.copy(self.trad_c),
-                                   borderwidth=0)
+                                   image=self.play_icon, compound="center", command=lambda:
+                                   speech(self.trad_c.cget("text"), "Cantonese"), borderwidth=0)
         self.play_trad.grid(row=0, column=2)
 
         tk.Label(self.frame, text="(Cantonese)", font=("Noto Serif", 12, "italic")).grid(row=1, column=2,
@@ -193,12 +197,12 @@ class MainApp:
         self.jyutping.grid(row=1, column=1)
 
         self.copy_simp = tk.Button(self.frame, font=("Noto Sans", 10),
-                                   image=self.copy_icon, compound="center", command=lambda: self.copy(self.simp_c),
-                                   borderwidth=0)
+                                   image=self.copy_icon, compound="center", command=lambda:
+                                   self.copy(self.simp_c), borderwidth=0)
         self.copy_simp.grid(row=2, column=3, padx=10)
         self.play_simp = tk.Button(self.frame, font=("Noto Sans", 10),
-                                   image=self.play_icon, compound="center", command=lambda: self.copy(self.simp_c),
-                                   borderwidth=0)
+                                   image=self.play_icon, compound="center", command=lambda:
+                                   speech(self.simp_c.cget("text"), "Mandarin"), borderwidth=0)
         self.play_simp.grid(row=2, column=2)
 
         tk.Label(self.frame, text="(Mandarin)", font=("Noto Serif", 12, "italic")).grid(row=3, column=2,
@@ -269,7 +273,6 @@ class MainApp:
                                      command=self.frame3.place_forget)
         self.done_button.pack(pady=(10, 0))
         self.frame3.place(x=20, y=160)
-        self.frame3.place_forget()
 
         self.generate_new(self.trad_c, self.simp_c, self.jyutping, self.pinyin, self.hsk_and_level, self.hsk_label,
                           self.number, self.english, self.dict)
