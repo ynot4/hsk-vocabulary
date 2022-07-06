@@ -2,12 +2,11 @@ from playsound import playsound
 import pyttsx3
 
 location = "speech.wav"
+engine = pyttsx3.init()  # object creation
+voices = engine.getProperty('voices')
 
 
 def speech(text, language):
-    engine = pyttsx3.init()  # object creation
-    print(text, language)
-    voices = engine.getProperty('voices')
     for voice in voices:
         if language == "Cantonese":
             if "TTS_MS_ZH-HK" in voice.id:
@@ -18,8 +17,9 @@ def speech(text, language):
                 engine.setProperty("voice", voice.id)
                 break
 
-    engine.save_to_file(text, location)
+    engine.say(text)
+    #engine.save_to_file(text, location)
     engine.runAndWait()
     engine.stop()
 
-    playsound(location)
+    #playsound(location)
