@@ -4,8 +4,21 @@ from PIL import Image, ImageTk
 from save_dict import get_dict, save_location, get_canto_rom, get_mand
 
 import random
+import sys
+import os
 from lists import eng, jyut, level, pinyin, simp, trad, yale, yalenum
 from text_speech import speech
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class MainApp:
@@ -133,12 +146,13 @@ class MainApp:
         self.master = master
         self.master.title("HSK Vocabulary")
         self.master.geometry("950x600")
+        self.master.iconbitmap(resource_path("icons/app_icon.ico"))
 
         self.master.update()
         self.header = tk.Canvas(self.master, height=100, width=self.master.winfo_width(), bg="#3298dc")
         self.header.create_text((300, 50), text="HSK Vocabulary", font=("Noto Sans", 35, "bold"), fill="white")
 
-        self.temple = ImageTk.PhotoImage(Image.open("icons/chinese.png").resize((88, 88)))
+        self.temple = ImageTk.PhotoImage(Image.open(resource_path("icons/chinese.png")).resize((88, 88)))
         self.header.create_image(10, 10, anchor="nw", image=self.temple)
 
         self.options = tk.Menubutton(self.header, text="Options", font=("Noto Sans SC", 25), relief="raised")
@@ -192,8 +206,8 @@ class MainApp:
         self.simp_c = tk.Label(self.frame, font=("Noto Sans SC", 60, "bold"))
         self.simp_c.grid(row=2, column=1, padx=20)
 
-        self.copy_icon = ImageTk.PhotoImage(Image.open("icons/copy.png").resize((40, 40)))
-        self.play_icon = ImageTk.PhotoImage(Image.open("icons/play.png").resize((40, 40)))
+        self.copy_icon = ImageTk.PhotoImage(Image.open(resource_path("icons/copy.png")).resize((40, 40)))
+        self.play_icon = ImageTk.PhotoImage(Image.open(resource_path("icons/play.png")).resize((40, 40)))
 
         self.copy_trad = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.copy_icon, compound="center", command=lambda: self.copy(self.trad_c),
