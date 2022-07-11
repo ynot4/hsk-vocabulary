@@ -1,5 +1,19 @@
 from playsound import playsound
 import pyttsx3
+import requests
+import os
+from gtts import gTTS
+import tkinter as tk
+import tkinter.messagebox
+
+
+def check_internet_connection():
+    try:
+        requests.head("http://www.google.com/", timeout=1)
+        return True
+    except requests.ConnectionError:
+        return False
+
 
 location = "speech.wav"
 engine = pyttsx3.init()  # object creation
@@ -7,19 +21,38 @@ voices = engine.getProperty('voices')
 
 
 def speech(text, language):
-    for voice in voices:
-        if language == "Cantonese":
-            if "TTS_MS_ZH-HK" in voice.id:
+    offline_voice_available = False
+    if language == "Cantonese":
+        for voice in voices:
+            if "ZH-HK" in voice.id.upper():
+                offline_voice_available = True
                 engine.setProperty("voice", voice.id)
                 break
-        else:
-            if "TTS_MS_ZH-CN" in voice.id:
+        if not offline_voice_available:
+            tk.messagebox.showerror(title="Error",
+                                    message="Cantonese text to speech is not available. Please install the Chinese "
+                                            "(Traditional, Hong Kong SAR) language pack in Settings.")
+
+    elif language == "Mandarin":
+        for voice in voices:
+            if "ZH-CN" in voice.id.upper() or "ZH-TW" in voice.id.upper():
+                offline_voice_available = True
                 engine.setProperty("voice", voice.id)
                 break
+        if not offline_voice_available:
+            if check_internet_connection():
+                tts = gTTS(text, lang="zh-CN")
+                filename = "speech.mp3"
+                tts.save(filename)
+                playsound(filename)
+                os.remove(filename)
+            else:
+                tk.messagebox.showerror(title="Error",
+                                        message="Mandarin text to speech is not available. Please install the Chinese "
+                                                "(Simplified, China) language pack in Settings or connect to the "
+                                                "internet.")
 
-    engine.say(text)
-    #engine.save_to_file(text, location)
-    engine.runAndWait()
-    engine.stop()
-
-    #playsound(location)
+    if offline_voice_available:
+        engine.say(text)
+        engine.runAndWait()
+        engine.stop()
