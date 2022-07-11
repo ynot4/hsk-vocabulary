@@ -51,10 +51,16 @@ def speech(text, language, mand_var):
                 playsound(filename)
                 os.remove(filename)
             else:
-                tk.messagebox.showerror(title="Error",
-                                        message="Mandarin text to speech is not available. Please install the Chinese "
-                                                "(Simplified, China) language pack in Settings or connect to the "
-                                                "internet.")
+                if mand_var == "Taiwanese":
+                    tk.messagebox.showerror(title="Error",
+                                            message="Mandarin text to speech is not available. Please install the "
+                                                    "Chinese (Traditional, Taiwan) language pack in Settings or connect"
+                                                    " to the internet.")
+                else:
+                    tk.messagebox.showerror(title="Error",
+                                            message="Mandarin text to speech is not available. Please install the "
+                                                    "Chinese (Simplified, China) language pack in Settings or connect "
+                                                    "to the internet.")
 
     if offline_voice_available:
         engine.say(text)
