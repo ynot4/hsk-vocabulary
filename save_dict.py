@@ -13,7 +13,7 @@ def create_save_folder():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    save_location = directory + r"\selected_hsk_levels.py"
+    save_location = directory + r"\config.py"
 
     if not os.path.exists(save_location):
         with open(save_location, "w") as f:
@@ -24,7 +24,8 @@ def create_save_folder():
 "HSK 5": 0,
 "HSK 6": 0,
 }
-canto_rom = "Yale (Tone Numbers)"''')
+canto_rom = "Yale (Tone Numbers)"
+mand = "Standard Chinese"''')
 
     return save_location
 
@@ -36,7 +37,7 @@ import importlib.util
 
 def get_dict():
     MODULE_PATH = save_location
-    MODULE_NAME = "selected_hsk_levels"
+    MODULE_NAME = "config"
 
     spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
     modulevar = importlib.util.module_from_spec(spec)
@@ -49,12 +50,25 @@ def get_dict():
 
 def get_canto_rom():
     MODULE_PATH = save_location
-    MODULE_NAME = "selected_hsk_levels"
+    MODULE_NAME = "config"
 
     spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
     modulevar = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulevar)
 
     rom = (modulevar.canto_rom)
+
+    return rom
+
+
+def get_mand():
+    MODULE_PATH = save_location
+    MODULE_NAME = "config"
+
+    spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
+    modulevar = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulevar)
+
+    rom = (modulevar.mand)
 
     return rom

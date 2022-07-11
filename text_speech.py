@@ -20,7 +20,7 @@ engine = pyttsx3.init()  # object creation
 voices = engine.getProperty('voices')
 
 
-def speech(text, language):
+def speech(text, language, mand_var):
     offline_voice_available = False
     if language == "Cantonese":
         for voice in voices:
@@ -33,15 +33,19 @@ def speech(text, language):
                                     message="Cantonese text to speech is not available. Please install the Chinese "
                                             "(Traditional, Hong Kong SAR) language pack in Settings.")
 
-    elif language == "Mandarin":
+    else:
+        if mand_var == "Taiwanese":
+            var = "ZH-TW"
+        else:
+            var = "ZH-CN"
         for voice in voices:
-            if "ZH-CN" in voice.id.upper() or "ZH-TW" in voice.id.upper():
+            if var in voice.id.upper():
                 offline_voice_available = True
                 engine.setProperty("voice", voice.id)
                 break
         if not offline_voice_available:
             if check_internet_connection():
-                tts = gTTS(text, lang="zh-CN")
+                tts = gTTS(text, lang=var)
                 filename = "speech.mp3"
                 tts.save(filename)
                 playsound(filename)

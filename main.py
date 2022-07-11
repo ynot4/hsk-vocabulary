@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
 from PIL import Image, ImageTk
-from save_dict import get_dict, save_location, get_canto_rom
+from save_dict import get_dict, save_location, get_canto_rom, get_mand
 
 import random
 from lists import eng, jyut, level, pinyin, simp, trad, yale, yalenum
@@ -166,6 +166,19 @@ class MainApp:
                                         command=lambda: set_roms(self.cantonese_roms, 2, rand_int, self.jyutping))
         self.options.menu.add_cascade(label="Cantonese Romanisation", font=("Noto Sans", 14), menu=self.cantonese_roms)
 
+        def set_mand(menu, index):
+            global mand
+            mand = menu.entrycget(index, "label")
+            write_file()
+
+        self.mandarin_variety = tk.Menu(self.header, tearoff=0)
+        self.mandarin_variety.add_command(label="Standard Chinese", font=("Noto Sans", 10),
+                                          command=lambda: set_mand(self.mandarin_variety, 0))
+        self.mandarin_variety.add_command(label="Taiwanese", font=("Noto Sans", 10),
+                                          command=lambda: set_mand(self.mandarin_variety, 1))
+        self.options.menu.add_cascade(label="Mandarin Speech Variety", font=("Noto Sans", 14),
+                                      menu=self.mandarin_variety)
+
         self.options.place(x=800, y=25)
         self.header.pack()
 
@@ -188,7 +201,7 @@ class MainApp:
         self.copy_trad.grid(row=0, column=3, padx=10)
         self.play_trad = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.play_icon, compound="center", command=lambda:
-                                   speech(self.trad_c.cget("text"), "Cantonese"), borderwidth=0)
+            speech(self.trad_c.cget("text"), "Cantonese", mand), borderwidth=0)
         self.play_trad.grid(row=0, column=2)
 
         tk.Label(self.frame, text="(Cantonese)", font=("Noto Serif", 12, "italic")).grid(row=1, column=2,
@@ -198,11 +211,11 @@ class MainApp:
 
         self.copy_simp = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.copy_icon, compound="center", command=lambda:
-                                   self.copy(self.simp_c), borderwidth=0)
+            self.copy(self.simp_c), borderwidth=0)
         self.copy_simp.grid(row=2, column=3, padx=10)
         self.play_simp = tk.Button(self.frame, font=("Noto Sans", 10),
                                    image=self.play_icon, compound="center", command=lambda:
-                                   speech(self.simp_c.cget("text"), "Mandarin"), borderwidth=0)
+            speech(self.simp_c.cget("text"), "Mandarin", mand), borderwidth=0)
         self.play_simp.grid(row=2, column=2)
 
         tk.Label(self.frame, text="(Mandarin)", font=("Noto Serif", 12, "italic")).grid(row=3, column=2,
@@ -255,8 +268,8 @@ class MainApp:
             for item in range(len(self.dict)):
                 self.saved_dict += f'"{self.hsk_levels[item]}": {list(self.dict.values())[item].get()},\n'
             self.saved_dict += "}"
-            global canto_rom
             self.saved_dict += f'\ncanto_rom = "{canto_rom}"'
+            self.saved_dict += f'\nmand = "{mand}"'
             with open(save_location, "w") as f:
                 f.write(self.saved_dict)
 
@@ -281,6 +294,7 @@ class MainApp:
 if __name__ == '__main__':
     root = tk.Tk()
     canto_rom = get_canto_rom()
+    mand = get_mand()
     rand_int = int()
     app = MainApp(root)
     root.mainloop()
