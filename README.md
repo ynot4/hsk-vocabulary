@@ -8,7 +8,7 @@ Programmed in **Python** using **Tkinter**.
 ## Requirements:
 
 The ***[Chinese (Traditional, Hong Kong SAR) voice package](https://support.microsoft.com/en-us/topic/download-voices-for-immersive-reader-read-mode-and-read-aloud-4c83a8d8-7486-42f7-8e46-2b0fdf753130)*** must be installed in Windows for Cantonese text-to-speech to function properly.
-No voice packages are necessary for Mandarin text-to-speech if connected to the internet, otherwise download either the ***Chinese (Simplified, China*** or ***Chinese (Traditional, Taiwan)*** voice package.
+No voice packages are necessary for Mandarin text-to-speech if connected to the internet, otherwise download either the ***Chinese (Simplified, China)*** or ***Chinese (Traditional, Taiwan)*** voice package.
 
 The ***[Noto Sans font](https://fonts.google.com/noto/specimen/Noto+Sans) with [Hong Kong](https://fonts.google.com/noto/specimen/Noto+Sans+HK) and [Simplified Chinese families](https://fonts.google.com/noto/specimen/Noto+Sans+SC)*** must be installed for best display.
 
